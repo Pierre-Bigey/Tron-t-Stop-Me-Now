@@ -1,0 +1,46 @@
+Idées:
+- Tron like 1v1 (vue 0 du haut ou fps split screen si possible)
+- Shooter PVE
+- Jumper
+- 
+
+
+TRON : 
+gauche droite
+laisse une trainee de couleur
+si on touche une trainée on meurt
+Carte avec murs
+Se controle avec L/R
+
+si on a le temps : 
+boost de Vitesse - powerup
+
+
+à faire : 
+Perso qui se déplace : 
+ - speed (constante mais reglable)
+ - turn speed (same)
+
+Faire une ambiance visuelle
+
+Perso qui tape un mur :
+ - Debug
+
+Laisser les traînées:
+ - Spline Unity
+
+Menu : 
+ - Start 
+ - Quit
+ - How to play
+
+Son 
+
+Boucle de jeu :
+- Menu
+- Start
+- Joue 
+- Meurt
+- Menu GG
+- Restart / Exit
+

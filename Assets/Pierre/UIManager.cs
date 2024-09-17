@@ -28,6 +28,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject RedWinner;
     [SerializeField] private GameObject BlueWinner;
 
+    [Header("Audio")] 
+    [SerializeField] private AudioClip bip;
+    [SerializeField] private AudioClip endbip;
+    [SerializeField] private AudioSource audioSource;
+    
     private void Start()
     {
         HideWinner();
@@ -100,12 +105,16 @@ public class UIManager : MonoBehaviour
     private IEnumerator CountDown()
     {
         yield return new WaitForSecondsRealtime(0.5f);
+        audioSource.PlayOneShot(bip);
         countdownText.text = "3";
         yield return new WaitForSecondsRealtime(1);
+        audioSource.PlayOneShot(bip);
         countdownText.text = "2";
         yield return new WaitForSecondsRealtime(1);
+        audioSource.PlayOneShot(bip);
         countdownText.text = "1";
         yield return new WaitForSecondsRealtime(1);
+        audioSource.PlayOneShot(endbip);
         countdownText.text = "";
         GlobalEvents.CountdownEnd.Invoke();
         ScreenSeparator.SetActive(true);

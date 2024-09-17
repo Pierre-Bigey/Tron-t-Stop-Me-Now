@@ -41,6 +41,8 @@ public class PlayerController : MonoBehaviour
     private PlayerInputActions playerInputActions;
     
     private InputAction moveAction;
+
+    [SerializeField] private AudioSource explosionSource;
     
 
     private void Awake()
@@ -132,6 +134,7 @@ public class PlayerController : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
+        explosionSource.Play();
         Debug.Log("Player "+team+" collided with "+other.gameObject.name);
         GlobalEvents.PlayerLost.Invoke(team);
         PlayerMoto.SetActive(false);

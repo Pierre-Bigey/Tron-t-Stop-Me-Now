@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,20 +8,50 @@ public class TrailMeshGenerator : MonoBehaviour
     public float trailWidth = 0.5f; // Horizontal width of the trail.
     public float trailHeight = 1.0f; // Vertical height of the trail (wall height).
     public float stepRate = 0.1f;   // Time interval (in seconds) to add new trail segments.
-
+    
     private Mesh trailMesh;  // The mesh that will be updated dynamically to create the trail.
     private List<Vector3> vertices = new List<Vector3>();  // Store vertices for the trail.
     private List<int> triangles = new List<int>();  // Store triangle indices.
     private float timeSinceLastStep = 0f;  // Timer to control when to add the next step.
+    
+    private MeshCollider meshCollider;
 
-    void Start()
+    private bool running = false;
+
+
+    private void Awake()
     {
-        // Initialize the mesh and set it to the MeshFilter
+        running = false;
+    }
+    
+    void ResetMesh()
+    {
         trailMesh = new Mesh();
+        trailMesh.name = gameObject.name + "Mesh";
         GetComponent<MeshFilter>().mesh = trailMesh;
-
-        // Add the initial segment (optional if you want the trail to start immediately)
+        
+        meshCollider = gameObject.GetComponent<MeshCollider>();
+        
+        meshCollider.sharedMesh = null;
+        
+        vertices = new List<Vector3>();
+        triangles = new List<int>();
+        
         AddTrailSegment();
+    }
+
+    private void OnEnable()
+    {
+        GlobalEvents.PlayerLost += OnPlayerLost;
+        GlobalEvents.RoundStart += OnRoundStart;
+        GlobalEvents.CountdownEnd += OnCountdownEnd;
+    }
+
+    private void OnDisable()
+    {
+        GlobalEvents.PlayerLost -= OnPlayerLost;
+        GlobalEvents.RoundStart -= OnRoundStart;
+        GlobalEvents.CountdownEnd -= OnCountdownEnd;
     }
 
     void Update()
@@ -28,7 +59,7 @@ public class TrailMeshGenerator : MonoBehaviour
         // Track time to add new trail segments based on the specified stepRate
         timeSinceLastStep += Time.deltaTime;
 
-        if (timeSinceLastStep >= stepRate)
+        if (running && timeSinceLastStep >= stepRate)
         {
             // Add a new trail segment every 'stepRate' seconds
             AddTrailSegment();
@@ -115,5 +146,27 @@ public class TrailMeshGenerator : MonoBehaviour
         // Recalculate normals and bounds for correct rendering
         trailMesh.RecalculateNormals();
         trailMesh.RecalculateBounds();
+        
+        // Update the MeshCollider with the new mesh
+        meshCollider.sharedMesh = null;  // Reset the mesh to ensure the update is applied
+        meshCollider.sharedMesh = trailMesh;
+    }
+
+    void OnPlayerLost(Team _)
+    {
+        running = false;
+        meshCollider.sharedMesh = null;
+    }
+
+    void OnRoundStart()
+    {
+        ResetMesh();
+        timeSinceLastStep = 0f;
+    }
+
+    void OnCountdownEnd()
+    {
+        ResetMesh();
+        running = true;
     }
 }

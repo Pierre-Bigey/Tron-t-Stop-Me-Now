@@ -13,6 +13,7 @@ public enum Team
 public class GlobalEvents
 {
     public static Action<Team> PlayerLost;
+    public static Action Draw;
     public static Action RoundStart;
     public static Action ShowScores;
     public static Action CountdownEnd;
@@ -72,6 +73,7 @@ public class PlayerController : MonoBehaviour
         moveAction.Enable();
         
         GlobalEvents.PlayerLost += OnPlayerLost;
+        GlobalEvents.Draw += OnDraw;
         GlobalEvents.RoundStart += OnRoundStart;
         GlobalEvents.ShowScores += OnShowScore;
         GlobalEvents.CountdownEnd += OnCountdownEnd;
@@ -82,12 +84,18 @@ public class PlayerController : MonoBehaviour
         moveAction.Disable();
         
         GlobalEvents.PlayerLost -= OnPlayerLost;
+        GlobalEvents.Draw -= OnDraw;
         GlobalEvents.RoundStart -= OnRoundStart;
         GlobalEvents.ShowScores -= OnShowScore;
         GlobalEvents.CountdownEnd -= OnCountdownEnd;
     }
 
     private void OnPlayerLost(Team _)
+    {
+        speed = 0;
+    }
+
+    private void OnDraw()
     {
         speed = 0;
     }
@@ -135,8 +143,15 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         explosionSource.Play();
-        Debug.Log("Player "+team+" collided with "+other.gameObject.name);
-        GlobalEvents.PlayerLost.Invoke(team);
+        
+        if(other.gameObject.layer == 6){
+            Debug.Log("Player "+team+" collided with other Player");
+            GlobalEvents.Draw.Invoke();
+        }else{
+            Debug.Log("Player "+team+" collided with "+other.gameObject.name);
+            GlobalEvents.PlayerLost.Invoke(team);
+        }
+        
         PlayerMoto.SetActive(false);
         explosionSystem.Play();
     }

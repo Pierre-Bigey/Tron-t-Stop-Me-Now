@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject WinnerPannel;
     [SerializeField] private GameObject RedWinner;
     [SerializeField] private GameObject BlueWinner;
+    [SerializeField] private GameObject Draw;
 
     [Header("Audio")] 
     [SerializeField] private AudioClip bip;
@@ -45,12 +46,14 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         GlobalEvents.PlayerLost += OnPlayerLost;
+        GlobalEvents.Draw += OnDraw;
         GlobalEvents.RoundStart += OnRoundStart;
     }
 
     private void OnDisable()
     {
         GlobalEvents.PlayerLost -= OnPlayerLost;
+        GlobalEvents.Draw -= OnDraw;
         GlobalEvents.RoundStart -= OnRoundStart;
     }
 
@@ -58,6 +61,12 @@ public class UIManager : MonoBehaviour
     {
         Team winner = team == Team.RED ? Team.BLUE : Team.RED; 
         StartCoroutine(ShowWinnerAfterCoolDown(winner));
+        ScreenSeparator.SetActive(false);
+    }
+
+    void OnDraw()
+    {
+        StartCoroutine(ShowDrawAfterCoolDown());
         ScreenSeparator.SetActive(false);
     }
 
@@ -73,6 +82,16 @@ public class UIManager : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(pre_winner_cooldown);
         ShowWinner(team);
+        yield return new WaitForSecondsRealtime(post_winner_cooldown);
+        HideWinner();
+        GlobalEvents.ShowScores.Invoke();
+        ShowScore();
+    }
+
+    private IEnumerator ShowDrawAfterCoolDown()
+    {
+        yield return new WaitForSecondsRealtime(pre_winner_cooldown);
+        ShowDraw();
         yield return new WaitForSecondsRealtime(post_winner_cooldown);
         HideWinner();
         GlobalEvents.ShowScores.Invoke();
@@ -100,6 +119,14 @@ public class UIManager : MonoBehaviour
         WinnerPannel.SetActive(true);
         BlueWinner.SetActive(team == Team.BLUE);
         RedWinner.SetActive(team == Team.RED);
+    }
+
+    private void ShowDraw()
+    {
+        WinnerPannel.SetActive(true);
+        BlueWinner.SetActive(false);
+        RedWinner.SetActive(false);
+        Draw.SetActive(true);
     }
 
     private IEnumerator CountDown()

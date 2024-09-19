@@ -119,6 +119,7 @@ public class UIManager : MonoBehaviour
         WinnerPannel.SetActive(true);
         BlueWinner.SetActive(team == Team.BLUE);
         RedWinner.SetActive(team == Team.RED);
+        Draw.SetActive(false);
     }
 
     private void ShowDraw()

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TrailMeshGenerator : MonoBehaviour
@@ -43,6 +44,7 @@ public class TrailMeshGenerator : MonoBehaviour
     private void OnEnable()
     {
         GlobalEvents.PlayerLost += OnPlayerLost;
+        GlobalEvents.Draw += OnDraw;
         GlobalEvents.RoundStart += OnRoundStart;
         GlobalEvents.CountdownEnd += OnCountdownEnd;
     }
@@ -50,6 +52,7 @@ public class TrailMeshGenerator : MonoBehaviour
     private void OnDisable()
     {
         GlobalEvents.PlayerLost -= OnPlayerLost;
+        GlobalEvents.Draw -= OnDraw;
         GlobalEvents.RoundStart -= OnRoundStart;
         GlobalEvents.CountdownEnd -= OnCountdownEnd;
     }
@@ -168,5 +171,11 @@ public class TrailMeshGenerator : MonoBehaviour
     {
         ResetMesh();
         running = true;
+    }
+    
+    void OnDraw()
+    {
+        running = false;
+        meshCollider.sharedMesh = null;
     }
 }
